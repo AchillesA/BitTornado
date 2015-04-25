@@ -1,5 +1,6 @@
 import os
 import time
+import base64
 import hashlib
 import itertools
 import BitTornado
@@ -42,8 +43,8 @@ class PeerID(object):
                                         toc1, toc2, toc3, os.getpid()).encode(
                                             'utf-8')
 
-        self.randstr = ''.join(mapbase64[i & 0x3F]
-                               for i in hashlib.sha1(x).digest()[-11:])
+        self.randstr = base64.urlsafe_b64encode(
+            hashlib.sha1(x).digest()[-9:])[:11].decode()
 
     def __str__(self):
         return self.create()

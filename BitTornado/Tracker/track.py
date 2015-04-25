@@ -130,7 +130,7 @@ def statefiletemplate(x):
                     raise ValueError
                 # ... of client ids interested in that torrent
                 for id, info in y.items():
-                    if (len(id) != 20):
+                    if len(id) != 20:
                         raise ValueError
                     # ... each of which is also a dictionary
                     # ... which has an IP, a Port, and a Bytes Left count for
@@ -348,7 +348,7 @@ class Tracker:
                            self.timeout_downloaders_interval)
         self.logfile = None
         self.log = None
-        if (config['logfile']) and (config['logfile'] != '-'):
+        if config['logfile'] and config['logfile'] != '-':
             try:
                 self.logfile = config['logfile']
                 self.log = open(self.logfile, 'a')
@@ -885,11 +885,11 @@ class Tracker:
             random.shuffle(cache[1])
             random.shuffle(cache[2])
             self.cached[infohash][return_type] = cache
-            for rr in range(len(self.cached[infohash])):
+            for rr, cached in enumerate(self.cached[infohash]):
                 if rr != return_type:
                     try:
-                        self.cached[infohash][rr][1].extend(vv[rr])
-                    except (KeyError, IndexError, TypeError, AttributeError):
+                        cached[1].extend(vv[rr])
+                    except (IndexError, TypeError, AttributeError):
                         pass
         if len(cache[1]) < l_get_size:
             peerdata = cache[1]
@@ -969,7 +969,7 @@ class Tracker:
 
             if path == '' or path == 'index.html':
                 return self.get_infopage()
-            if (path == 'file'):
+            if path == 'file':
                 return self.get_file(params('info_hash'))
             if path == 'favicon.ico' and self.favicon is not None:
                 return (200, 'OK', {'Content-Type': 'image/x-icon'},
@@ -987,11 +987,11 @@ class Tracker:
 
             # main tracker function
 
-            filtered = self.Filter.check(real_ip, paramslist, headers)
-            if filtered:
-                return (400, 'Not Authorized', {'Content-Type': 'text/plain',
-                                                'Pragma': 'no-cache'},
-                        bencode({'failure reason': filtered}))
+            #filtered = self.Filter.check(real_ip, paramslist, headers)
+            #if filtered:
+            #    return (400, 'Not Authorized', {'Content-Type': 'text/plain',
+            #                                    'Pragma': 'no-cache'},
+            #            bencode({'failure reason': filtered}))
 
             infohash = params('info_hash')
             if not infohash:
@@ -1178,7 +1178,7 @@ class Tracker:
                 if t < self.prevtime:
                     self.delete_peer(x, myid)
         self.prevtime = clock()
-        if (self.keep_dead != 1):
+        if not self.keep_dead:
             for key, value in list(self.downloads.items()):
                 if len(value) == 0 and (self.allowed is None or
                                         key not in self.allowed):
