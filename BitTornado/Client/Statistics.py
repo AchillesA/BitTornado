@@ -29,12 +29,13 @@ class Statistics:
         self.placesopen = 0
         self.filelistupdated = threading.Event()
         self.filelistupdated.set()
-        frange = range(len(files))
-        self.filepieces = [[] for x in frange]
-        self.filepieces2 = [[] for x in frange]
-        self.fileamtdone = [0.0 for x in frange]
-        self.filecomplete = [False for x in frange]
-        self.fileinplace = [False for x in frange]
+        nfiles = len(files)
+        frange = range(nfiles)
+        self.filepieces = [[] for _ in frange]
+        self.filepieces2 = [[] for _ in frange]
+        self.fileamtdone = [0.0] * nfiles
+        self.filecomplete = [False] * nfiles
+        self.fileinplace = [False] * nfiles
         start = 0
         for i in frange:
             l = files[i][1]
@@ -111,7 +112,7 @@ class Statistics:
         try:
             s.upRate = int(self.ratelimiter.upload_rate / 1000)
             assert s.upRate < 5000
-        except:
+        except AssertionError:
             s.upRate = 0
         s.upSlots = self.ratelimiter.slots
 

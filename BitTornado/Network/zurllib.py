@@ -1,4 +1,5 @@
 import gzip
+import socket
 import http.client
 import urllib
 from io import BytesIO
@@ -15,7 +16,7 @@ class btHTTPcon(http.client.HTTPConnection):
         http.client.HTTPConnection.connect(self)
         try:
             self.sock.settimeout(30)
-        except:
+        except socket.error:
             pass
 
 
@@ -25,7 +26,7 @@ class btHTTPScon(http.client.HTTPSConnection):
         http.client.HTTPSConnection.connect(self)
         try:
             self.sock.settimeout(30)
-        except:
+        except socket.error:
             pass
 
 
@@ -40,7 +41,7 @@ class urlopen:
         if self.tries > MAX_REDIRECTS:
             raise IOError(('http error', 500,
                           "Internal Server Error: Redirect Recursion"))
-        (scheme, netloc, path, pars, query, fragment) = \
+        (scheme, netloc, path, pars, query, _) = \
             urllib.parse.urlparse(url)
         if scheme != 'http' and scheme != 'https':
             raise IOError(('url error', 'unknown url type', scheme, url))
@@ -65,7 +66,7 @@ class urlopen:
         if status in (301, 302):
             try:
                 self.connection.close()
-            except:
+            except socket.error:
                 pass
             self._open(self.response.getheader('Location'))
             return
@@ -76,7 +77,7 @@ class urlopen:
                 if 'failure reason' in d:
                     self.error_return = data
                     return
-            except:
+            except (IOError, ValueError):
                 pass
             raise IOError(('http error', status, self.response.reason))
 
@@ -92,7 +93,7 @@ class urlopen:
                 compressed = BytesIO(data)
                 f = gzip.GzipFile(fileobj=compressed)
                 data = f.read()
-            except:
+            except IOError:
                 raise IOError(('http error', 'got corrupt response'))
         return data
 

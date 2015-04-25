@@ -177,84 +177,6 @@ def _failfunc(x):
     print(x)
 
 
-# old-style downloader
-def download(params, filefunc, statusfunc, finfunc, errorfunc, doneflag, cols,
-             pathFunc=None, presets={}, exchandler=None, failed=_failfunc,
-             paramfunc=None):
-
-    try:
-        config = parse_params(params, presets)
-    except ValueError as e:
-        failed('error: {}\nrun with no args for parameter explanations'.format(
-            e))
-        return
-    if not config:
-        errorfunc(get_usage())
-        return
-
-    myid = createPeerID()
-    random.seed(myid)
-
-    rawserver = RawServer(doneflag, config['timeout_check_interval'],
-                          config['timeout'],
-                          ipv6_enable=config['ipv6_enabled'],
-                          failfunc=failed, errorfunc=exchandler)
-
-    upnp_type = UPnP_test(config['upnp_nat_access'])
-    try:
-        listen_port = rawserver.find_and_bind(
-            config['minport'], config['maxport'], config['bind'],
-            ipv6_socket_style=config['ipv6_binds_v4'], upnp=upnp_type,
-            randomizer=config['random_port'])
-    except socket.error as e:
-        failed("Couldn't listen - " + str(e))
-        return
-
-    response = get_response(config['responsefile'], config['url'], failed)
-    if not response:
-        return
-
-    infohash = hashlib.sha1(bencode(response['info'])).digest()
-
-    d = BT1Download(statusfunc, finfunc, errorfunc, exchandler, doneflag,
-                    config, response, infohash, myid, rawserver, listen_port)
-
-    if not d.saveAs(filefunc):
-        return
-
-    if pathFunc:
-        pathFunc(d.getFilename())
-
-    hashcheck = d.initFiles(old_style=True)
-    if not hashcheck:
-        return
-    if not hashcheck():
-        return
-    if not d.startEngine():
-        return
-    d.startRerequester()
-    d.autoStats()
-
-    statusfunc(activity='connecting to peers')
-
-    if paramfunc:
-        paramfunc({
-            # change_max_upload_rate(<int KiB/sec>)
-            'max_upload_rate': d.setUploadRate,
-            # change_max_uploads(<int max uploads>)
-            'max_uploads': d.setConns,
-            'listen_port': listen_port,     # int
-            'peer_id': myid,                # string
-            'info_hash': infohash,          # string
-            # start_connection((<string ip>, <int port>), <peer id>)
-            'start_connection': d._startConnection,
-        })
-
-    rawserver.listen_forever(d.getPortHandler())
-
-    d.shutdown()
-
-
 def parse_params(params, presets={}):
     if len(params) == 0:
         return None
@@ -268,7 +190,7 @@ def parse_params(params, presets={}):
         else:
             try:
                 urlparse(args[0])
-            except:
+            except ValueError:
                 raise ValueError('bad filename or url')
             config['url'] = args[0]
     elif (config['responsefile'] == '') == (config['url'] == ''):
@@ -291,21 +213,21 @@ def get_response(file, url, errorfunc):
                 front = line.split(':', 1)[0]
                 assert front[0] == 'd'
                 int(front[1:])
-            except:
+            except (AssertionError, IOError):
                 errorfunc(file + ' is not a valid responsefile')
                 return None
             try:
                 h.seek(0)
-            except:
+            except IOError:
                 try:
                     h.close()
-                except:
+                except IOError:
                     pass
                 h = open(file, 'rb')
         else:
             try:
                 h = urlopen(url)
-            except:
+            except socket.error:
                 errorfunc(url + ' bad url')
                 return None
         response = h.read()
@@ -315,12 +237,12 @@ def get_response(file, url, errorfunc):
         return None
     try:
         h.close()
-    except:
+    except (IOError, socket.error):
         pass
     try:
         try:
             response = bdecode(response)
-        except:
+        except ValueError:
             errorfunc("warning: bad data in responsefile")
             response = bdecode(response, sloppy=1)
         check_type(response, dict)
@@ -507,7 +429,7 @@ class BT1Download:
                     for p in self.priority:
                         assert p >= -1
                         assert p <= 2
-                except:
+                except (AssertionError, ValueError):
                     self.errorfunc('bad priority list given, ignored')
                     self.priority = None
 
@@ -516,10 +438,10 @@ class BT1Download:
                 d = data['resume data']['priority']
                 assert len(d) == len(self.files)
                 disabled_files = [x == -1 for x in d]
-            except:
+            except (KeyError, TypeError, AssertionError):
                 try:
                     disabled_files = [x == -1 for x in self.priority]
-                except:
+                except TypeError:
                     pass
 
         try:
@@ -750,7 +672,8 @@ class BT1Download:
                 torrentdata['resume data'] = self.fileselector.pickle()
             try:
                 self.appdataobj.writeTorrentData(self.infohash, torrentdata)
-            except:
+            except Exception as e:
+                print(e)
                 self.appdataobj.deleteTorrentData(self.infohash)  # clear it
         return not self.failed and not self.excflag.isSet()
         # if returns false, you may wish to auto-restart the torrent
@@ -823,7 +746,7 @@ class BT1Download:
     def getResponse(self):
         try:
             return self.response
-        except:
+        except Exception:   # How?
             return None
 
     def Pause(self):

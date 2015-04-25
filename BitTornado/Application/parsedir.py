@@ -51,9 +51,8 @@ def parsedir(directory, parsed, files, blocked, exts=('.torrent',),
                      or files[path][0] != new_files[path][0]}
 
     # Missing files are removed
-    removed = {}
-    for ((_mtime, _length), filehash) in removed_files.values():
-        removed[filehash] = parsed[filehash]
+    removed = {filehash: parsed[filehash]
+               for (_, filehash) in removed_files.values()}
 
     # unchanged_files = files \ removed_files
     unchanged_files = {path: files[path] for path in files

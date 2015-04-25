@@ -19,9 +19,9 @@ class SingleDownload:
         self.downloader = downloader
         self.baseurl = url
         try:
-            (scheme, self.netloc, path, pars, query, fragment) = \
+            (scheme, self.netloc, path, pars, query, _) = \
                 urllib.parse.urlparse(url)
-        except:
+        except ValueError:
             self.downloader.errorfunc('cannot parse http seed address: ' + url)
             return
         if scheme != 'http':
@@ -29,7 +29,7 @@ class SingleDownload:
             return
         try:
             self.connection = http.client.HTTPConnection(self.netloc)
-        except:
+        except Exception:
             self.downloader.errorfunc('cannot connect to http seed: ' + url)
             return
         self.seedurl = path
@@ -110,11 +110,11 @@ class SingleDownload:
             self.error = 'error accessing http seed: ' + str(e)
             try:
                 self.connection.close()
-            except:
+            except Exception:
                 pass
             try:
                 self.connection = http.client.HTTPConnection(self.netloc)
-            except:
+            except Exception:
                 # will cause an exception and retry next cycle
                 self.connection = None
         self.downloader.rawserver.add_task(self.request_finished)
@@ -142,7 +142,7 @@ class SingleDownload:
         if self.connection_status == 503:   # seed is busy
             try:
                 self.retry_period = max(int(self.received_data), 5)
-            except:
+            except ValueError:
                 pass
             return False
         if self.connection_status != 200:

@@ -322,7 +322,7 @@ class SingleDownload:
                 if have[i]:
                     self.downloader.picker.got_have(i)
         if self.downloader.endgamemode and not self.downloader.paused:
-            for piece, begin, length in self.downloader.all_requests:
+            for piece, _, _ in self.downloader.all_requests:
                 if self.have[piece]:
                     self.send_interested()
                     break
@@ -527,7 +527,7 @@ class Downloader:
                 for piece in pieces:
                     try:
                         self.endgame_queued_pieces.remove(piece)
-                    except:
+                    except (ValueError, AttributeError):
                         pass
             new_all_requests = []
             for index, nb, nl in self.all_requests:

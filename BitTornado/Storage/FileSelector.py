@@ -20,7 +20,7 @@ class FileSelector:
         self.new_partials = None
         self.filepieces = []
         total = 0
-        for file, length in files:
+        for _, length in files:
             if not length:
                 self.filepieces.append(())
             else:
@@ -38,7 +38,7 @@ class FileSelector:
                 assert isinstance(v, int)
                 assert v >= -1
                 assert v <= 2
-        except:
+        except AssertionError:
             return False
         try:
             files_updated = False
@@ -204,7 +204,7 @@ class FileSelector:
     def __getitem__(self, index):
         try:
             return self.new_priority[index]
-        except:
+        except TypeError:
             return self.priority[index]
 
     def finish(self):

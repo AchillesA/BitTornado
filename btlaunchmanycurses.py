@@ -20,7 +20,7 @@ try:
     import curses
     import curses.panel
     from curses.wrapper import wrapper as curses_wrapper
-except:
+except ImportError:
     print('Textmode GUI initialization failed, cannot proceed.')
     print()
     print('This download interface requires the standard Python module '
@@ -40,7 +40,7 @@ def fmttime(n):
     try:
         n = int(n)
         assert n < 5184000  # 60 days
-    except:
+    except (AssertionError, ValueError):
         return 'connecting to peers'
     m, s = divmod(n, 60)
     h, m = divmod(m, 60)
@@ -119,7 +119,7 @@ class CursesDisplayer:
 
         try:
             self.scrwin.border(*map(ord, '||--    '))
-        except:
+        except Exception:
             pass
         self.headerwin.addnstr(0, 2, '#', self.mainwinw - 25, curses.A_BOLD)
         self.headerwin.addnstr(0, 4, 'Filename', self.mainwinw - 25,
@@ -176,8 +176,8 @@ class CursesDisplayer:
                 self._display_line('')
                 if self._display_line(''):
                     break
-            (name, status, progress, peers, seeds, seedsmsg, dist,
-             uprate, dnrate, upamt, dnamt, size, t, msg) = data[ii]
+            (name, status, progress, peers, seeds, _, dist, uprate, dnrate,
+             upamt, dnamt, size, t, msg) = data[ii]
             t = fmttime(t)
             if t:
                 status = t
@@ -215,10 +215,11 @@ class CursesDisplayer:
                                  'no torrents', 12, curses.A_BOLD)
         totalup = 0
         totaldn = 0
-        for (name, status, progress, peers, seeds, seedsmsg, dist,
-             uprate, dnrate, upamt, dnamt, size, t, msg) in data:
-            totalup += uprate
-            totaldn += dnrate
+        for entry in data:
+            #entry = (name, status, progress, peers, seeds, seedsmsg, dist,
+            #         uprate, downrate, upamount, downamount, size, t, msg)
+            totalup += entry[7]
+            totaldn += entry[8]
 
         totalup = '%s/s' % fmtsize(totalup)
         totaldn = '%s/s' % fmtsize(totaldn)
