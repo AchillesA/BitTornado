@@ -28,7 +28,6 @@ from BitTornado.Application.PeerID import createPeerID
 try:
     import curses
     import curses.panel
-    from curses.wrapper import wrapper as curses_wrapper
 except ImportError:
     print('Textmode GUI initialization failed, cannot proceed.')
     print()
@@ -384,7 +383,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     errlist = []
-    curses_wrapper(run, errlist, sys.argv[1:])
+    curses.wrapper(run, errlist, sys.argv[1:])
 
     if errlist:
         print("These errors occurred during execution:")

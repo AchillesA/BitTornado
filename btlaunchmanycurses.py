@@ -20,7 +20,6 @@ from BitTornado.Application.ConfigDir import ConfigDir
 try:
     import curses
     import curses.panel
-    from curses.wrapper import wrapper as curses_wrapper
 except ImportError:
     print('Textmode GUI initialization failed, cannot proceed.')
     print()
@@ -273,7 +272,7 @@ if __name__ == '__main__':
               ''.format(e))
         sys.exit(1)
 
-    curses_wrapper(LaunchManyWrapper, config)
+    curses.wrapper(LaunchManyWrapper, config)
     if Exceptions:
         print('\nEXCEPTION:')
         print(Exceptions[0])
