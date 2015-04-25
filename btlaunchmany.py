@@ -25,9 +25,9 @@ class HeadlessDisplayer:
              uprate, dnrate, upamt, dnamt, size, t, msg) = x
             print('"{}": "{}" ({}) - {}P{}{}{:.3f}D u{:0.1f}K/s-d{:0.1f}K/s '
                   'u{:d}K-d{:d}K "{}"'.format(
-                  name, status, progress, peers, seeds, seedsmsg, dist,
-                  uprate / 1000, dnrate / 1000, upamt / 1024, dnamt / 1024,
-                  msg))
+                      name, status, progress, peers, seeds, seedsmsg, dist,
+                      uprate / 1000, dnrate / 1000, upamt / 1024, dnamt / 1024,
+                      msg))
         return False
 
     def message(self, s):

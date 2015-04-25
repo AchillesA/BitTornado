@@ -529,7 +529,8 @@ class Tracker:
                             tt = tt + szt
                             if self.allow_get == 1:
                                 linkname = '<a href="/file?info_hash=' + \
-                                    urllib.parse.quote(hash) + '">' + name + '</a>'
+                                    urllib.parse.quote(hash) + '">' + name + \
+                                    '</a>'
                             else:
                                 linkname = name
                             s.write('<tr><td><code>%s</code></td><td>%s</td>'
