@@ -194,7 +194,7 @@ class SocketHandler(object):
                       ipv6_socket_style=1, upnp=0, randomizer=False):
         e = 'maxport less than minport - no ports to check'
         if maxport - minport < 50 or not randomizer:
-            portrange = range(minport, maxport + 1)
+            portrange = list(range(minport, maxport + 1))
             if randomizer:
                 random.shuffle(portrange)
                 portrange = portrange[:20]  # check a maximum of 20 ports
