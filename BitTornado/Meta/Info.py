@@ -4,7 +4,6 @@ These data structures are generalizations of the original BitTorrent and
 BitTornado makemetafile.py behaviors.
 """
 
-import sys
 import os
 import re
 import time

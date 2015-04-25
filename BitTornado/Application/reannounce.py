@@ -8,9 +8,9 @@ def reannounce(fname, announce, announce_list=None, verbose=False):
     if verbose:
         # Accept torrents with no announce
         if 'announce' in metainfo:
-            print 'old announce for {}: {}'.format(fname, metainfo['announce'])
+            print('old announce for {}: {}'.format(fname, metainfo['announce']))
         else:
-            print 'No announce found.'
+            print('No announce found.')
 
     metainfo['announce'] = announce
 

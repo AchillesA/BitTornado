@@ -6,7 +6,7 @@ import binascii
 URANDOM = getattr(os, 'urandom', None)
 if not URANDOM:
     random.seed()
-    URANDOM = lambda x: ''.join(chr(random.randint(0, 255)) for i in xrange(x))
+    URANDOM = lambda x: ''.join(chr(random.randint(0, 255)) for _ in range(x))
 
 try:
     from Crypto.Cipher import ARC4

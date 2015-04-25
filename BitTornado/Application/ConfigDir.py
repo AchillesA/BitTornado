@@ -5,7 +5,6 @@ import BitTornado
 import sys
 import os
 import time
-import shutil
 from binascii import hexlify, unhexlify
 from .inifile import ini_write, ini_read
 from BitTornado.Meta.bencode import bencode, bdecode
