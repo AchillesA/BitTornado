@@ -3,27 +3,29 @@ The following list is based on comment lines in individual files as of 10 Feb
 
 BitTornado/
     bitfield.py
-        - Bram Cohen, Uoti Urpala, John Hoffman and Christopher J. Johnson
+        - Bram Cohen, Uoti Urpala, John Hoffman and Christopher J. Markiewicz
     clock.py
         - John Hoffman
     Application/
         ConfigDir.py
-            - John Hoffman and Christopher J. Johnson
+            - John Hoffman and Christopher J. Markiewicz
         ConnChoice.py
             - John Hoffman
         inifile.py
-            - John Hoffman and Christopher J. Johnson
+            - John Hoffman and Christopher J. Markiewicz
         makemetafile.py
-            - Bram Cohen, John Hoffman, Christopher J. Johnson
+            - Bram Cohen, John Hoffman, Christopher J. Markiewicz
+        NumberFormats.py
+            - Christopher J. Markiewicz
         parseargs.py
-            - Bill Bumgarner, Bram Cohen and Christopher J. Johnson
+            - Bill Bumgarner, Bram Cohen and Christopher J. Markiewicz
         parsedir.py
-            - John Hoffman, Uoti Urpala and Christopher J. Johnson
+            - John Hoffman, Uoti Urpala and Christopher J. Markiewicz
         PeerID.py
-            - Christopher J. Johnson
+            - Christopher J. Markiewicz
                 - based on code by John Hoffman
         reannounce.py
-            - Christopher J. Johnson
+            - Christopher J. Markiewicz
                 - based on code by Henry 'Pi' James, Bram Cohen,
                     and John Hoffman
     Client
@@ -58,12 +60,12 @@ BitTornado/
     Meta
         bencode.py
             - Petru Paler, Uoti Urpala, Ross Cohen, John Hoffman, and
-                Christopher J. Johnson
+                Christopher J. Markiewicz
         BTTree.py
-            - Christopher J. Johnson
+            - Christopher J. Markiewicz
                 - based on code by Bram Cohen and John Hoffman
         Info.py
-            - Christopher J. Johnson and Bram Cohen
+            - Christopher J. Markiewicz and Bram Cohen
                 - based on code by John Hoffman
     Network
         BTcrypto.py
@@ -77,7 +79,7 @@ BitTornado/
             - John Hoffman
                 - based on code by Yejun Yang and Myers Carpenter
         NetworkAddress.py
-            - Christopher J. Johnson
+            - Christopher J. Markiewicz
                 - based on code by John Hoffman
         RawServer.py
             - Bram Cohen
@@ -92,7 +94,7 @@ BitTornado/
     Storage
         FileSelector.py
             - John Hoffman
-        piecebuffer.py
+        PieceBuffer.py
             - John Hoffman
         Storage.py
             - Bram Cohen
@@ -106,7 +108,7 @@ BitTornado/
         T2T.py
             - John Hoffman
         torrentlistparse.py
-            - John Hoffman and Christopher J. Johnson
+            - John Hoffman and Christopher J. Markiewicz
         track.py
             - Bram Cohen
 

@@ -15,6 +15,7 @@ from .Filter import Filter
 from .HTTPHandler import HTTPHandler, months
 from .T2T import T2TList
 from .torrentlistparse import parsetorrentlist
+from BitTornado.Application.NumberFormats import formatSize
 from BitTornado.Application.parseargs import parseargs, formatDefinitions
 from BitTornado.Application.parsedir import parsedir
 from BitTornado.Meta.bencode import bencode, bdecode, Bencached
@@ -537,8 +538,8 @@ class Tracker:
                                     '<td align="right">%i</td>'
                                     '<td align="right">%i</td>'
                                     '<td align="right">%s</td></tr>\n' %
-                                    (hexlify(hash), linkname, size_format(sz),
-                                     c, d, n, size_format(szt)))
+                                    (hexlify(hash), linkname, formatSize(sz),
+                                     c, d, n, formatSize(szt)))
                     else:
                         s.write('<tr><td><code>%s</code></td>'
                                 '<td align="right"><code>%i</code></td>'
@@ -550,7 +551,7 @@ class Tracker:
                             '<td align="right">%s</td><td align="right">%i'
                             '</td><td align="right">%i</td><td align="right">'
                             '%i</td><td align="right">%s</td></tr>\n' %
-                            (nf, size_format(ts), tc, td, tn, size_format(tt)))
+                            (nf, formatSize(ts), tc, td, tn, formatSize(tt)))
                 else:
                     s.write('<tr><td align="right">%i files</td>'
                             '<td align="right">%i</td><td align="right">%i'
@@ -587,7 +588,7 @@ class Tracker:
         f = {'complete': c, 'incomplete': d, 'downloaded': n}
         if return_name and self.show_names and self.config['allowed_dir']:
             f['name'] = self.allowed[hash]['name']
-        return (f)
+        return f
 
     def get_scrape(self, paramslist):
         fs = {}
@@ -852,7 +853,7 @@ class Tracker:
         bc = self.becache.setdefault(infohash, self.cache_default)
         len_l = len(bc[2][0])
         len_s = len(bc[2][1])
-        if not (len_l + len_s):   # caches are empty!
+        if not len_l + len_s:   # caches are empty!
             data['peers'] = []
             return data
         l_get_size = int(float(rsize) * (len_l) / (len_l + len_s))
@@ -1208,17 +1209,3 @@ def track(args):
         HTTPHandler(t.get, config['min_time_between_log_flushes']))
     t.save_state()
     print('# Shutting down: ', isotime())
-
-
-def size_format(s):
-    if s < 1024:
-        r = '{:d}B'.format(s)
-    elif s < 1048576:
-        r = '{:.0f}KiB'.format(s / 1024)
-    elif s < 1073741824:
-        r = '{:.0f}MiB'.format(s / 1048576)
-    elif s < 1099511627776:
-        r = '{:.2f}GiB'.format(s / 1073741824.0)
-    else:
-        r = '{:.2f}TiB'.format(s / 1099511627776.0)
-    return r

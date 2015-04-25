@@ -1,20 +1,33 @@
+"""Wrapper on character arrays that avoids garbage-collection/reallocation.
+
+Example:
+
+from PieceBuffer import PieceBuffer
+x = PieceBuffer()
+...
+x.release()
+"""
+
 import threading
-from array import array
+import array
 
 
 class SingleBuffer(object):
     """Non-shrinking array"""
     def __init__(self, pool):
         self.pool = pool
-        self.buf = array('B')
-
-    def init(self):
+        self.buf = array.array('B')
         self.length = 0
 
-    def append(self, s):
-        l = self.length + len(s)
-        self.buf[self.length:l] = array('B', s)
-        self.length = l
+    def init(self):
+        """Prepare buffer for use."""
+        self.length = 0
+
+    def append(self, string):
+        """Extend buffer with characters in string"""
+        length = self.length + len(string)
+        self.buf[self.length:length] = array.array('B', string)
+        self.length = length
 
     def __len__(self):
         return self.length
@@ -32,12 +45,14 @@ class SingleBuffer(object):
             slc = slice(slc.start, stop, slc.step)
         elif not -self.length <= slc < self.length:
             raise IndexError('SingleBuffer index out of range')
-        return self.buf[a:b]
+        return self.buf[slc]
 
     def getarray(self):
+        """Get array containing contents of buffer"""
         return self.buf[:self.length]
 
     def release(self):
+        """Return buffer to pool for reallocation"""
         self.pool.release(self)
 
 
