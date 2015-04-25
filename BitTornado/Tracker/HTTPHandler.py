@@ -1,8 +1,8 @@
 import sys
 import time
+import gzip
 from io import StringIO, BytesIO
 from BitTornado.clock import clock
-from gzip import GzipFile
 
 DEBUG = False
 
@@ -83,7 +83,7 @@ class HTTPConnection:
             return
         if self.encoding == 'gzip':
             compressed = BytesIO()
-            gz = GzipFile(fileobj=compressed, mode='wb', compresslevel=9)
+            gz = gzip.GzipFile(fileobj=compressed, mode='wb', compresslevel=9)
             gz.write(data)
             gz.close()
             cdata = compressed.getvalue()

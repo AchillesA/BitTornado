@@ -1,9 +1,9 @@
+import threading
+import random
+import http.client
+import urllib
 from .CurrentRateMeasure import Measure
 from BitTornado.bitfield import TrueBitfield
-from random import randint
-from http.client import HTTPConnection
-from urllib.parse import urlparse, quote
-from threading import Thread
 from BitTornado import product_name, version_short
 
 EXPIRE_TIME = 60 * 60
@@ -19,7 +19,8 @@ class SingleDownload:
         self.downloader = downloader
         self.baseurl = url
         try:
-            (scheme, self.netloc, path, pars, query, fragment) = urlparse(url)
+            (scheme, self.netloc, path, pars, query, fragment) = \
+                urllib.parse.urlparse(url)
         except:
             self.downloader.errorfunc('cannot parse http seed address: ' + url)
             return
@@ -27,7 +28,7 @@ class SingleDownload:
             self.downloader.errorfunc('http seed url not http: ' + url)
             return
         try:
-            self.connection = HTTPConnection(self.netloc)
+            self.connection = http.client.HTTPConnection(self.netloc)
         except:
             self.downloader.errorfunc('cannot connect to http seed: ' + url)
             return
@@ -37,7 +38,8 @@ class SingleDownload:
         self.seedurl += '?'
         if query:
             self.seedurl += query + '&'
-        self.seedurl += 'info_hash=' + quote(self.downloader.infohash)
+        self.seedurl += 'info_hash=' + \
+            urllib.parse.quote(self.downloader.infohash)
 
         self.measure = Measure(downloader.max_rate_period)
         self.index = None
@@ -52,7 +54,7 @@ class SingleDownload:
         self.goodseed = False
         self.active = False
         self.cancelled = False
-        self.resched(randint(2, 10))
+        self.resched(random.randint(2, 10))
 
     def resched(self, len=None):
         if len is None:
@@ -86,7 +88,7 @@ class SingleDownload:
             if self.request_size < \
                     self.downloader.storage._piecelen(self.index):
                 self.url += '&ranges=' + self._request_ranges()
-            rq = Thread(target=self._request)
+            rq = threading.Thread(target=self._request)
             rq.setDaemon(False)
             rq.start()
             self.active = True
@@ -111,7 +113,7 @@ class SingleDownload:
             except:
                 pass
             try:
-                self.connection = HTTPConnection(self.netloc)
+                self.connection = http.client.HTTPConnection(self.netloc)
             except:
                 # will cause an exception and retry next cycle
                 self.connection = None

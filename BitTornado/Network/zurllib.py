@@ -1,5 +1,5 @@
 import gzip
-import http
+import http.client
 import urllib
 from io import BytesIO
 from BitTornado.Meta.bencode import bdecode

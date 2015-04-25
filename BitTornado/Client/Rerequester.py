@@ -1,23 +1,19 @@
+import os
+import time
+import threading
 import urllib
 import hashlib
 from BitTornado.Network.zurllib import urlopen
 from BitTornado.Meta.Info import check_type
 from BitTornado.Meta.bencode import bdecode
-from threading import Thread, Lock
 from io import StringIO
 from traceback import print_exc
 from socket import error, gethostbyname
 from random import shuffle
-from time import time
-try:
-    from os import getpid
-except ImportError:
-    def getpid():
-        return 1
 
 mapbase64 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.-'
 keys = {}
-basekeydata = str(getpid()) + repr(time()) + 'tracker'
+basekeydata = str(os.getpid()) + repr(time.time()) + 'tracker'
 
 
 def add_key(tracker):
@@ -112,7 +108,7 @@ class Rerequester:
         self.rejectedmessage = 'rejected by tracker - '
 
         self.url = ('info_hash=%s&peer_id=%s' %
-                    (urllib.quote(infohash), urllib.quote(myid)))
+                    (urllib.parse.quote(infohash), urllib.parse.quote(myid)))
         if not config.get('crypto_allowed'):
             self.url += "&port="
         else:
@@ -129,7 +125,7 @@ class Rerequester:
 
         seed_id = config.get('dedicated_seed_id')
         if seed_id:
-            self.url += '&seed_id=' + urllib.quote(seed_id)
+            self.url += '&seed_id=' + urllib.parse.quote(seed_id)
         if self.seededfunc:
             self.url += '&check_seeded=1'
 
@@ -198,9 +194,9 @@ class Rerequester:
             s = '{}&uploaded={}&downloaded={}&left={}'.format(
                 self.url, self.up(), self.down(), self.amount_left())
         if self.last is not None:
-            s += '&last=' + urllib.quote(str(self.last))
+            s += '&last=' + urllib.parse.quote(str(self.last))
         if self.trackerid is not None:
-            s += '&trackerid=' + urllib.quote(str(self.trackerid))
+            s += '&trackerid=' + urllib.parse.quote(str(self.trackerid))
         if self.howmany() >= self.maxpeers:
             s += '&numwant=0'
         else:
@@ -224,7 +220,7 @@ class Rerequester:
             self.sched(retry, 5)         # retry in 5 seconds
             return
         self.lock.reset()
-        rq = Thread(target=self._rerequest, args=[s, callback])
+        rq = threading.Thread(target=self._rerequest, args=[s, callback])
         rq.setDaemon(False)
         rq.start()
 
@@ -277,8 +273,8 @@ class Rerequester:
 
     def rerequest_single(self, t, s, callback):
         l = self.lock.set()
-        rq = Thread(target=self._rerequest_single,
-                    args=[t, s + get_key(t), l, callback])
+        rq = threading.Thread(target=self._rerequest_single,
+                              args=[t, s + get_key(t), l, callback])
         rq.setDaemon(False)
         rq.start()
         self.lock.wait()
@@ -436,8 +432,8 @@ class Rerequester:
 
 class SuccessLock:
     def __init__(self):
-        self.lock = Lock()
-        self.pause = Lock()
+        self.lock = threading.Lock()
+        self.pause = threading.Lock()
         self.code = 0
         self.success = False
         self.finished = True

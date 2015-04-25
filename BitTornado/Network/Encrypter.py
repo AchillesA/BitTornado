@@ -22,7 +22,7 @@ def tobinary16(i):
 def make_readable(s):
     if not s:
         return ''
-    if urllib.quote(s).find('%') >= 0:
+    if urllib.parse.quote(s).find('%') >= 0:
         return hexlify(s).upper()
     return '"' + s + '"'
 
