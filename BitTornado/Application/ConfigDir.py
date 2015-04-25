@@ -8,7 +8,7 @@ import time
 import shutil
 from binascii import hexlify, unhexlify
 from .inifile import ini_write, ini_read
-from BitTornado.Meta.Info import MetaInfo
+from BitTornado.Meta.bencode import bencode, bdecode
 from .parseargs import defaultargs
 
 DIRNAME = '.' + BitTornado.product_name
@@ -134,7 +134,8 @@ class ConfigDir(object):
             fname += '.' + str(version)
 
         try:
-            return MetaInfo.read(fname)
+            with open(fname, 'rb') as f:
+                return bdecode(f.read())
         except (IOError, ValueError):
             return None
 
@@ -153,7 +154,8 @@ class ConfigDir(object):
         if version:
             fname += '.' + str(version)
         try:
-            data.write(fname)
+            with open(fname, 'wb') as f:
+                f.write(bencode(data))
         except (IOError, TypeError, KeyError):
             return None
 
@@ -168,7 +170,8 @@ class ConfigDir(object):
         if not os.path.exists(fname):
             return None
         try:
-            data = MetaInfo.read(fname)
+            with open(fname, 'rb') as f:
+                data = bdecode(f.read())
         except (IOError, ValueError):
             data = None
         self.torrentDataBuffer[fname] = data
@@ -179,7 +182,8 @@ class ConfigDir(object):
         self.torrentDataBuffer[torrent] = data
         fname = os.path.join(self.dir_datacache, hexlify(torrent))
         try:
-            data.write(fname)
+            with open(fname, 'wb') as f:
+                f.write(bencode(data))
             return True
         except (IOError, TypeError, KeyError):
             self.deleteTorrentData(torrent)
