@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 'Copy announce URLs from one torrent to others'
 
 # btreannounce.py written by Henry 'Pi' James and Bram Cohen

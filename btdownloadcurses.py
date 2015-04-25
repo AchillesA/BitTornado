@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Written by Henry 'Pi' James
 # see LICENSE.txt for license information
@@ -262,8 +262,8 @@ class CursesDisplayer:
 
             if statistics is not None:
                 self.spewwin.addnstr(
-                    self.spewh - 1, 0, 'downloading {:d} pieces, have %d '
-                    'fragments, %d of %d pieces completed'.format(
+                    self.spewh - 1, 0, 'downloading {:d} pieces, have {:d} '
+                    'fragments, {:d} of {:d} pieces completed'.format(
                         statistics.storage_active,
                         statistics.storage_dirty,
                         statistics.storage_numcomplete,

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Written by Henry 'Pi' James and Loring Holden
 # modified for multitracker display by John Hoffman

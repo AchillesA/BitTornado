@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Written by John Hoffman
 # see LICENSE.txt for license information

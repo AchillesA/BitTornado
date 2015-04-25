@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Replace the suggested filename for the target of a .torrent file
 #
