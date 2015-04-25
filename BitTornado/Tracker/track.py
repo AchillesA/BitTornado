@@ -695,24 +695,15 @@ class Tracker:
         if port is None:
             port = params('port', '')
         port = int(port)
-        if port < 0 or port > 65535:
+        if not 0 <= port <= 65535:
             raise ValueError('invalid port')
         left = int(params('left', ''))
         if left < 0:
             raise ValueError('invalid amount left')
         #uploaded = long(params('uploaded',''))
         #downloaded = long(params('downloaded',''))
-        if params('supportcrypto'):
-            supportcrypto = 1
-            try:
-                s = int(params['requirecrypto'])
-                chr(s)
-            except (KeyError, ValueError):
-                s = 0
-            requirecrypto = s
-        else:
-            supportcrypto = 0
-            requirecrypto = 0
+        supportcrypto = int(bool(params('supportcrypto')))
+        requirecrypto = supportcrypto and int(bool(params('requirecrypto')))
 
         peer = peers.get(myid)
         islocal = ip in local_IPs
